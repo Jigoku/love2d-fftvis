@@ -17,7 +17,7 @@ function love.load()
  Frequency = 44100 --The sampling rate of the song, in Hz
  length = Size / Frequency -- The size of each frequency range of the final generated FFT values.
  
- Music = love.audio.newSource(Song)
+ Music = love.audio.newSource(Song, "stream")
  Music:play()
  Window = love.window.setMode(1024, 768, {resizable=true, vsync=true})
 end
