@@ -48,9 +48,12 @@ end
 
 function love.draw()
     if UpdateSpectrum then
+        
+        bars()
+        --fire()
+        --balls()
+
         for i = 1, #spectrum/8 do --In case you want to show only a part of the list, you can use #spec/(amount of bars). Setting this to 1 will render all bars processed.
-            love.graphics.setColor(1-i/150,1-i/150,1-i/150,1)
-            love.graphics.rectangle("fill", i*BarWidth+1, ScreenSizeH, BarWidth, -1*(spectrum[i]:abs()*0.7)) --iterate over the list, and draws a rectangle for each band value.
             love.graphics.setColor(1,0.5,0.25,1)
             love.graphics.print("@ "..math.floor((i)/length).."Hz "..math.floor(spectrum[i]:abs()*0.7), ScreenSizeW-90,(12*i)) --prints the frequency and it's current value on the screen.
         end
@@ -64,4 +67,34 @@ end
 
 function love.keypressed(key)
     if key == "escape" then love.event.quit() end
+end
+
+
+function bars()
+    -- white bars
+    for i = 1, #spectrum/8 do 
+        local s = 1*(spectrum[i]:abs()*0.7)
+        love.graphics.setColor(0.5,0.75,0.5,1)
+        love.graphics.rectangle("fill", i*BarWidth+1, ScreenSizeH, BarWidth, -1*(spectrum[i]:abs()*0.7))
+    end
+end
+
+
+function fire()
+    -- orange/yellow/white
+    for i = 1, #spectrum/8 do 
+        local s = 1*(spectrum[i]:abs()*0.7)
+        love.graphics.setColor(s/10000*i*10/2, s/10000*i*5/2, s/10000*i/2/2,1)
+        love.graphics.rectangle("fill", i*BarWidth+1, ScreenSizeH, BarWidth, -1*(spectrum[i]:abs()*0.7),-2,-2,10)
+    end
+end
+
+
+function balls()
+    -- red bouncing balls
+    for i = 1, #spectrum/8 do
+        local s = 1*(spectrum[i]:abs()*0.5)
+        love.graphics.setColor(1,0,0,1)
+        love.graphics.circle("fill", i*BarWidth+1, ScreenSizeH - 1*(spectrum[i]:abs()), love.math.random(5,10), 20)
+    end
 end
