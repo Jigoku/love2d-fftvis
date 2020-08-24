@@ -3,7 +3,7 @@ abs = math.abs
 new = complex.new --required for using the FFT function.
 UpdateSpectrum = false
 
-Song = "Song/TimeBomb.mp3" --You have to put your songs somewhere along the main.lua file, so love2d can access it. Then, just point this string to the song you wish to use.
+Song = "music/song.ogg" --You have to put your songs somewhere along the main.lua file, so love2d can access it. Then, just point this string to the song you wish to use.
 
 function devide(list, factor)
     for i,v in ipairs(list) do list[i] = list[i] * factor end
