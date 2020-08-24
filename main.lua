@@ -2,6 +2,7 @@ require("luafft")
 UpdateSpectrum = true
 BarWidth = 10
 Song = "music/song.ogg" --You have to put your songs somewhere along the main.lua file, so love2d can access it. Then, just point this string to the song you wish to use.
+Theme = 1
 
 function devide(list, factor)
     for i,v in ipairs(list) do list[i] = list[i] * factor end
@@ -49,33 +50,82 @@ end
 function love.draw()
     if UpdateSpectrum then
         
-        bars()
-        --fire()
-        --balls()
+        if Theme == 1 then
+            oscilloscope()
+        elseif Theme == 2 then
+            bars(0) 
+        elseif Theme == 3 then
+            bars(1) 
+        elseif Theme == 4 then
+            balls()
+        elseif Theme == 5 then
+            fire()
+        elseif Theme == 6 then
+            squares()
+        elseif Theme == 7 then
+            dash()
+        end
 
         for i = 1, #spectrum/8 do --In case you want to show only a part of the list, you can use #spec/(amount of bars). Setting this to 1 will render all bars processed.
-            love.graphics.setColor(1,0.5,0.25,1)
+            love.graphics.setColor(0.5,0.5,0.5,1)
             love.graphics.print("@ "..math.floor((i)/length).."Hz "..math.floor(spectrum[i]:abs()*0.7), ScreenSizeW-90,(12*i)) --prints the frequency and it's current value on the screen.
         end
         love.graphics.setColor(1,1,1,1)
         love.graphics.print("current sample: " .. CopyPos, 0, 0) --Current position being analyzed.
         love.graphics.print("total samples : " .. SoundData:getSampleCount(), 0, 20) --Current size of song in samples.
         love.graphics.print(math.floor(CopyPos *100 / SoundData:getSampleCount()) .. "%", 0,40) -- Current percentage
+        love.graphics.print("Press <space> to change visualiser", 0, 60)
     end
 end
 
 
 function love.keypressed(key)
     if key == "escape" then love.event.quit() end
+    if key == "space"  then 
+        Theme = Theme + 1
+        if Theme > 7 then Theme = 1 end
+    end
 end
 
 
-function bars()
+function oscilloscope()
+    -- green oscilloscope
+    for i = 1, #spectrum/8 do 
+        love.graphics.setColor(0.3,1,0.8,1)
+        local a = 1*(spectrum[i]:abs()*0.7)
+        local b = 1*(spectrum[math.min(i+1,#spectrum/8)]:abs()*0.7)
+        love.graphics.line(i*BarWidth,ScreenSizeH-a,i*BarWidth+BarWidth,ScreenSizeH-b)
+    end
+end
+
+
+function dash()
+    -- dash lines
+    for i = 1, #spectrum/8 do 
+        love.graphics.setColor(0.3,0.8,1,1)
+        local a = 1*(spectrum[i]:abs()*0.7)
+        local b = 1*(spectrum[math.min(i+1,#spectrum)]:abs()*0.7)
+        love.graphics.line(i*BarWidth,ScreenSizeH-a,i*(BarWidth),ScreenSizeH-b)
+    end
+end
+
+
+function squares()
+    -- bouncing squares
+    for i = 1, #spectrum/8 do 
+        love.graphics.setColor(1*i/100,1,0,1)
+        local s = 1*(spectrum[i]:abs()*0.7)
+        love.graphics.rectangle("fill", i*BarWidth+1, ScreenSizeH-s, BarWidth, BarWidth)
+    end
+end
+
+
+function bars(f)
     -- white bars
+    love.graphics.setColor(1,1,1,1)
     for i = 1, #spectrum/8 do 
         local s = 1*(spectrum[i]:abs()*0.7)
-        love.graphics.setColor(0.5,0.75,0.5,1)
-        love.graphics.rectangle("fill", i*BarWidth+1, ScreenSizeH, BarWidth, -1*(spectrum[i]:abs()*0.7))
+        love.graphics.rectangle(f==1 and "fill" or "line", i*BarWidth+1, ScreenSizeH, BarWidth, -1*(spectrum[i]:abs()*0.7))
     end
 end
 
@@ -85,7 +135,7 @@ function fire()
     for i = 1, #spectrum/8 do 
         local s = 1*(spectrum[i]:abs()*0.7)
         love.graphics.setColor(s/10000*i*10/2, s/10000*i*5/2, s/10000*i/2/2,1)
-        love.graphics.rectangle("fill", i*BarWidth+1, ScreenSizeH, BarWidth, -1*(spectrum[i]:abs()*0.7),-2,-2,10)
+        love.graphics.rectangle("fill", i*BarWidth+1, ScreenSizeH, BarWidth, -s,-2,-2,10)
     end
 end
 
@@ -93,7 +143,6 @@ end
 function balls()
     -- red bouncing balls
     for i = 1, #spectrum/8 do
-        local s = 1*(spectrum[i]:abs()*0.5)
         love.graphics.setColor(1,0,0,1)
         love.graphics.circle("fill", i*BarWidth+1, ScreenSizeH - 1*(spectrum[i]:abs()), love.math.random(5,10), 20)
     end
